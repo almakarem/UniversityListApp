@@ -26,11 +26,11 @@ fun UniversitiesScreen(
     val context = LocalContext.current
     LaunchedEffect(key1 = universities.loadState){
         if (universities.loadState.refresh is LoadState.Error){
-            val error = (universities.loadState.refresh as LoadState.Error).error.message
-            Log.w("TAG", "UniversitiesScreen: \"Error: \" + $error", )
+            val error = (universities.loadState.refresh as LoadState.Error).error
+            Log.e("ERROR", "UniversitiesScreen: Error loading universities: $error", error)
             Toast.makeText(
                 context,
-                "Error: " + (universities.loadState.refresh as LoadState.Error).error.message,
+                "Error loading universities: ${error.localizedMessage}",
                 Toast.LENGTH_LONG
             ).show()
 
@@ -52,6 +52,7 @@ fun UniversitiesScreen(
             ){
                 items(universities.itemSnapshotList.items){university ->
                     UniversityItem(university = university)
+                    Log.w("TAG", "$university: ", )
                 }
                 item{
                     if(universities.loadState.append is LoadState.Loading){

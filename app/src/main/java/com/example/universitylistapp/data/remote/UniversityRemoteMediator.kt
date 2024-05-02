@@ -1,6 +1,5 @@
 package com.example.universitylistapp.data.remote
 
-import android.net.http.HttpException
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.paging.ExperimentalPagingApi
@@ -10,8 +9,7 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.example.universitylistapp.data.local.UniversityDatabase
 import com.example.universitylistapp.data.local.UniversityEntity
-import com.example.universitylistapp.data.mappers.toUniversityEntity
-import com.example.universitylistapp.data.remote.dto.University
+import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import java.io.IOException
 
@@ -19,33 +17,43 @@ import java.io.IOException
 class UniversityRemoteMediator(
     private val universityDb: UniversityDatabase,
     private val universityAPI: UniversityAPI
-): RemoteMediator<Int,UniversityEntity>() {
+): RemoteMediator<Int, UniversityEntity>() {
+
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, UniversityEntity>
     ): MediatorResult {
-        return try{
+        return try {
             delay(2000L)
-            val universities = universityAPI.getAllUniversities()
+            val universitiesResponse = universityAPI.getAllUniversities()
 
             universityDb.withTransaction {
-                if(loadType == LoadType.REFRESH){
+                if (loadType == LoadType.REFRESH) {
                     universityDb.dao.clearAll()
                 }
+                universityDb.dao.clearAll()
 
-                val universityEntity = universities.map {it.toUniversityEntity() }
-                universityDb.dao.upsertAll(universityEntity)
+                val universities = universitiesResponse.map {
+                    UniversityEntity(
+                        alpha_two_code = it.alpha_two_code ?: "",
+                        country = it.country ?: "",
+                        domains = Gson().toJson(it.domains),
+                        name = it.name ?: "",
+                        stateProvince = it.stateProvince ?: "",
+                        webPages = Gson().toJson(it.webPages)
+                    )
+                }
+
+                universityDb.dao.upsertAll(universities)
             }
 
             MediatorResult.Success(
-                endOfPaginationReached = universities.isEmpty()
+                endOfPaginationReached = universitiesResponse.isEmpty()
             )
-        }
-        catch (e: IOException){
+        } catch (e: IOException) {
             MediatorResult.Error(e)
-        }
-        catch (e: HttpException){
+        } catch (e: Exception) {
             MediatorResult.Error(e)
         }
     }

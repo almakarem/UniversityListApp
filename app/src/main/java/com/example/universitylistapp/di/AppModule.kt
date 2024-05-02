@@ -30,7 +30,9 @@ object AppModule {
             context,
             UniversityDatabase::class.java,
             "univirsities.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

@@ -1,5 +1,7 @@
 package com.example.universitylistapp.presentation
 
+import android.content.Intent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -17,21 +18,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import com.example.universitylistapp.data.remote.dto.University
 import com.example.universitylistapp.presentation.ui.theme.UniversityListAppTheme
+import com.example.universitylistapp.presentation.university_detail.UniversityDetails
 
 @Composable
 fun UniversityItem(
     university: University,
     modifier: Modifier = Modifier
 ){
+    val context = LocalContext.current
     Card(
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(2.dp),
+        modifier = Modifier.clickable {
+            val intent = Intent(context, UniversityDetails::class.java)
+            intent.putExtra("university", university.name)
+            context.startActivity(intent)
+        }
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -78,7 +88,7 @@ fun UniversityItemPreview(){
                 name = "Mohamed bin Zayed University of Artificial Intelligence (MBZUAI)",
                 stateProvince = "Abu Dhabi",
                 webPages = listOf("https://mbzuai.ac.ae/"),
-                alphaTwoCode = "AE"
+                alpha_two_code = "AE"
             ))
 
     }
