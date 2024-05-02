@@ -18,6 +18,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,15 +30,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.universitylistapp.data.remote.dto.University
 import com.example.universitylistapp.presentation.ui.theme.UniversityListAppTheme
 
 @Composable
 fun UniversityDetail(
     university: University,
+    viewModel: UniversityViewModel,
     modifier: Modifier = Modifier,
 ){
     val context = LocalContext.current
+    val values = viewModel.universityPaginFlow.collectAsLazyPagingItems()
     Card(
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
@@ -63,6 +70,7 @@ fun UniversityDetail(
                             .clickable {
                                 // Trigger refresh load state
 
+                                 values.refresh()
                                 // Finish the activity
                                 (context as? Activity)?.finish()
 
@@ -145,20 +153,20 @@ fun UniversityDetail(
     }
 }
 
-@Preview
-@Composable
-fun UniversityPreview(){
-    UniversityListAppTheme {
-        UniversityDetail(
-            university = University(
-                country = "United Arab Emirates",
-                domains = listOf("mbzuai.ac.ae"),
-                name = "Mohamed bin Zayed University of Artificial Intelligence (MBZUAI)",
-                stateProvince = "Abu Dhabi",
-                webPages = listOf("https://mbzuai.ac.ae/"),
-                alpha_two_code = "AE"
-            )
-        )
-
-    }
-}
+//@Preview
+//@Composable
+//fun UniversityPreview(){
+//    UniversityListAppTheme {
+//        UniversityDetail(
+//            university = University(
+//                country = "United Arab Emirates",
+//                domains = listOf("mbzuai.ac.ae"),
+//                name = "Mohamed bin Zayed University of Artificial Intelligence (MBZUAI)",
+//                stateProvince = "Abu Dhabi",
+//                webPages = listOf("https://mbzuai.ac.ae/"),
+//                alpha_two_code = "AE"
+//            )
+//        )
+//
+//    }
+//}

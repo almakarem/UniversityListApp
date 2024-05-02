@@ -28,6 +28,8 @@ class UniversityRemoteMediator(
             delay(2000L)
             val universitiesResponse = universityAPI.getAllUniversities()
 
+            
+
             universityDb.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     universityDb.dao.clearAll()

@@ -45,7 +45,7 @@ class UniversityDetails : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    UniversityDetail(university = university)
+                    UniversityDetail(university = university,viewModel)
                 }
             }
         }

@@ -52,7 +52,6 @@ fun UniversitiesScreen(
             ){
                 items(universities.itemSnapshotList.items){university ->
                     UniversityItem(university = university)
-                    Log.w("TAG", "$university: ", )
                 }
                 item{
                     if(universities.loadState.append is LoadState.Loading){
